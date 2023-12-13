@@ -259,11 +259,29 @@ private:
             std::cout << std::endl;
         }
     }
+    void printReverse(Node* node) {
+        if (node == nullptr)
+            return;
+
+        printReverse(node->left);
+        std::cout << "(" << node->data << "(";
+        if (node->color == BLACK)
+            std::cout << "BLACK)";
+        else
+            std::cout << "RED)";
+
+        if (node->left != nullptr || node->right != nullptr)
+            std::cout << "(";
+
+        printReverse(node->right);
+
+        if (node->left != nullptr || node->right != nullptr)
+            std::cout << ")";
+        std::cout << ")";
+    }
 
 public:
     RedBlackTree() : root(nullptr) {}
-
-    // Function to insert a node with given data
     void insert(int data) {
         Node *z = new Node(data);
         insertHelper(z);
@@ -284,5 +302,9 @@ public:
     }
     void printTree() {
         printLevelOrder();
+    }
+    void printTree() {
+        printReverse(root);
+        std::cout << std::endl;
     }
 };
