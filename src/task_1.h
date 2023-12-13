@@ -1,10 +1,10 @@
 enum Color { RED, BLACK };
 
 struct Node {
-    int inform;
+    int data;
     Color color;
     Node *left, *right, *parent;
-    Node(int inform) : inform(inform), color(RED), left(nullptr), right(nullptr), parent(nullptr) {}
+    Node(int data) : data(data), color(RED), left(nullptr), right(nullptr), parent(nullptr) {}
 };
 
 class RedBlackTree {
@@ -49,6 +49,7 @@ private:
         x->right = y;
         y->parent = x;
     }
+
     void fixViolation(Node *z) {
         while (z->parent != nullptr && z->parent->color == RED) {
             if (z->parent == z->parent->parent->left) {
@@ -98,7 +99,7 @@ private:
 
         while (x != nullptr) {
             y = x;
-            if (z->inform < x->inform)
+            if (z->data < x->data)
                 x = x->left;
             else
                 x = x->right;
@@ -107,31 +108,63 @@ private:
         z->parent = y;
         if (y == nullptr)
             root = z;
-        else if (z->inform < y->inform)
+        else if (z->data < y->data)
             y->left = z;
         else
             y->right = z;
 
         fixViolation(z);
     }
-    void inorderHelper(Node *x) {
-        if (x == nullptr)
+
+    void printLevelOrder() {
+        if (root == nullptr)
             return;
 
-        inorderHelper(x->left);
-        std::cout << x->inform << " ";
-        inorderHelper(x->right);
+        std::queue<Node *> q;
+        q.push(root);
+
+        while (!q.empty()) {
+            int nodeCount = q.size();
+
+            while (nodeCount > 0) {
+                Node *temp = q.front();
+                q.pop();
+
+                if (temp != nullptr) {
+                    std::cout << "(" << temp->data << "(";
+                    if (temp->color == BLACK)
+                        std::cout << "BLACK";
+                    else
+                        std::cout << "RED";
+
+                    if (temp->left != nullptr || temp->right != nullptr)
+                        std::cout << ")(";
+
+                    q.push(temp->left);
+                    q.push(temp->right);
+                } else {
+                    std::cout << "NULL";
+                }
+
+                nodeCount--;
+
+                if (nodeCount == 0)
+                    std::cout << ")";
+                else
+                    std::cout << ")";
+            }
+            std::cout << std::endl;
+        }
     }
 
 public:
     RedBlackTree() : root(nullptr) {}
 
-    void insert(int inform) {
-        Node *z = new Node(inform);
+    void insert(int data) {
+        Node *z = new Node(data);
         insertHelper(z);
     }
-    void inorder() {
-        inorderHelper(root);
-        std::cout << std::endl;
+    void printTree() {
+        printLevelOrder();
     }
 };
