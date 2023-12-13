@@ -167,4 +167,13 @@ public:
     void printTree() {
         printLevelOrder();
     }
+    void leftRotate() {
+        if (root != nullptr)
+            leftRotate(root);
+    }
+
+    void rightRotate() {
+        if (root != nullptr)
+            rightRotate(root);
+    }
 };
