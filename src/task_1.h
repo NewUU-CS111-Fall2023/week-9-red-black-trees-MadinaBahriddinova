@@ -4,6 +4,7 @@ struct Node {
     int data;
     Color color;
     Node *left, *right, *parent;
+
     Node(int data) : data(data), color(RED), left(nullptr), right(nullptr), parent(nullptr) {}
 };
 
@@ -50,7 +51,7 @@ private:
         y->parent = x;
     }
 
-    void fixViolation(Node *z) {
+    void insertFix(Node *z) {
         while (z->parent != nullptr && z->parent->color == RED) {
             if (z->parent == z->parent->parent->left) {
                 Node *y = z->parent->parent->right;
@@ -92,6 +93,74 @@ private:
         }
         root->color = BLACK;
     }
+    void deleteFix(Node *x) {
+        while (x != root && (x == nullptr || x->color == BLACK)) {
+            if (x == x->parent->left) {
+                Node *w = x->parent->right;
+
+                if (w->color == RED) {
+                    w->color = BLACK;
+                    x->parent->color = RED;
+                    leftRotate(x->parent);
+                    w = x->parent->right;
+                }
+
+                if ((w->left == nullptr || w->left->color == BLACK) &&
+                    (w->right == nullptr || w->right->color == BLACK)) {
+                    w->color = RED;
+                    x = x->parent;
+                } else {
+                    if (w->right == nullptr || w->right->color == BLACK) {
+                        if (w->left != nullptr)
+                            w->left->color = BLACK;
+                        w->color = RED;
+                        rightRotate(w);
+                        w = x->parent->right;
+                    }
+
+                    w->color = x->parent->color;
+                    x->parent->color = BLACK;
+                    if (w->right != nullptr)
+                        w->right->color = BLACK;
+                    leftRotate(x->parent);
+                    x = root;
+                }
+            } else {
+                Node *w = x->parent->left;
+
+                if (w->color == RED) {
+                    w->color = BLACK;
+                    x->parent->color = RED;
+                    rightRotate(x->parent);
+                    w = x->parent->left;
+                }
+
+                if ((w->right == nullptr || w->right->color == BLACK) &&
+                    (w->left == nullptr || w->left->color == BLACK)) {
+                    w->color = RED;
+                    x = x->parent;
+                } else {
+                    if (w->left == nullptr || w->left->color == BLACK) {
+                        if (w->right != nullptr)
+                            w->right->color = BLACK;
+                        w->color = RED;
+                        leftRotate(w);
+                        w = x->parent->left;
+                    }
+
+                    w->color = x->parent->color;
+                    x->parent->color = BLACK;
+                    if (w->left != nullptr)
+                        w->left->color = BLACK;
+                    rightRotate(x->parent);
+                    x = root;
+                }
+            }
+        }
+
+        if (x != nullptr)
+            x->color = BLACK;
+    }
 
     void insertHelper(Node *z) {
         Node *y = nullptr;
@@ -113,7 +182,41 @@ private:
         else
             y->right = z;
 
-        fixViolation(z);
+        insertFix(z);
+    }
+    void deleteNode(Node *z) {
+        Node *y, *x;
+
+        if (z->left == nullptr || z->right == nullptr)
+            y = z;
+        else {
+            y = z->right;
+            while (y->left != nullptr)
+                y = y->left;
+        }
+
+        if (y->left != nullptr)
+            x = y->left;
+        else
+            x = y->right;
+
+        if (x != nullptr)
+            x->parent = y->parent;
+
+        if (y->parent == nullptr)
+            root = x;
+        else if (y == y->parent->left)
+            y->parent->left = x;
+        else
+            y->parent->right = x;
+
+        if (y != z)
+            z->data = y->data;
+
+        if (y->color == BLACK)
+            deleteFix(x);
+
+        delete y;
     }
 
     void printLevelOrder() {
@@ -160,20 +263,26 @@ private:
 public:
     RedBlackTree() : root(nullptr) {}
 
+    // Function to insert a node with given data
     void insert(int data) {
         Node *z = new Node(data);
         insertHelper(z);
     }
+    void deleteNode(int data) {
+        Node *z = root;
+        while (z != nullptr) {
+            if (z->data == data) {
+                deleteNode(z);
+                return;
+            } else if (data < z->data) {
+                z = z->left;
+            } else {
+                z = z->right;
+            }
+        }
+        std::cout << "Node with value " << data << " not found in the tree." << std::endl;
+    }
     void printTree() {
         printLevelOrder();
-    }
-    void leftRotate() {
-        if (root != nullptr)
-            leftRotate(root);
-    }
-
-    void rightRotate() {
-        if (root != nullptr)
-            rightRotate(root);
     }
 };
