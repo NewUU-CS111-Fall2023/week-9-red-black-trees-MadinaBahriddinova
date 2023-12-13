@@ -25,7 +25,15 @@ int main() {
     
     
     std::cout << "Task 2" << std::endl;
-    // call for task 2
+    std::cout << "Performing left rotation:" << std::endl;
+    tree.leftRotate();
+    tree.printTree();
+
+    std::cout << "Performing right rotation:" << std::endl;
+    tree.rightRotate();
+    tree.printTree();
+    
+    
     std::cout << "Task 3" << std::endl;
     // call for task 3
     std::cout << "Task 4" << std::endl;
