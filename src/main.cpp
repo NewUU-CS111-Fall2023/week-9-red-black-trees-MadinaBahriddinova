@@ -5,6 +5,7 @@
  */
 
 #include <iostream>
+#include <queue>
 #include "task_1.h"
 
 int main() {
@@ -69,8 +70,5 @@ int main() {
     std::cout << "Tree Structure:" << std::endl;
     tree.printTree();
     
-    
-    std::cout << "Task 5" << std::endl;
-    // call for task 5
     return 0;
 }
